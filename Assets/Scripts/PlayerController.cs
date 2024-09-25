@@ -9,6 +9,11 @@ public class PlayerController : MonoBehaviour
     float speed = 12f;
     CharacterController characterController;
 
+    [SerializeField]
+    Transform groundChecker;
+    [SerializeField]
+    LayerMask groundMask;
+
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -16,7 +21,29 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        CheckTheGround();
         PlayerMove();
+    }
+
+    private void CheckTheGround()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(groundChecker.position, transform.up * (-1), out hit, 0.4f, groundMask))
+        {
+            string terrainType = hit.collider.gameObject.tag;
+            switch(terrainType)
+            {
+                case "Low":
+                    speed = 3f;
+                    break;
+                case "High":
+                    speed = 20f;
+                    break;
+                default:
+                    speed = 12f;
+                    break;
+            }
+        }
     }
 
     private void PlayerMove()
